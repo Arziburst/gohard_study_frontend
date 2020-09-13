@@ -6,16 +6,18 @@ import {
   fetchTodos, createTodo, updateTodo, deleteTodo,
 } from './api';
 
+const TYPE_TODOS = 'todos';
+
 export const useTodosQuery = () => {
-  return useQuery('todos', fetchTodos);
+  return useQuery(TYPE_TODOS, fetchTodos);
 };
 
 export const useCreateTodo = () => {
   return useMutation((body) => createTodo(body), {
     onSuccess: (createdTodo) => {
-      const previousTodos = queryCache.getQueryData('todos');
+      const previousTodos = queryCache.getQueryData(TYPE_TODOS);
 
-      queryCache.setQueryData('todos', () => [createdTodo, ...previousTodos]);
+      queryCache.setQueryData(TYPE_TODOS, () => [createdTodo, ...previousTodos]);
     },
   });
 };
@@ -23,9 +25,9 @@ export const useCreateTodo = () => {
 export const useUpdateTodo = () => {
   return useMutation((options) => updateTodo(options), {
     onSuccess: (updatedTodo) => {
-      const previousTodos = queryCache.getQueryData('todos');
+      const previousTodos = queryCache.getQueryData(TYPE_TODOS);
 
-      queryCache.setQueryData('todos', () => previousTodos.map((todo) => {
+      queryCache.setQueryData(TYPE_TODOS, () => previousTodos.map((todo) => {
         if (todo.id === updatedTodo.id) {
           return updatedTodo;
         }
